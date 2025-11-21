@@ -8,23 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #fff; }
-        
-        /* Tái sử dụng Navbar từ trang chủ để đồng bộ */
-        .navbar-brand { font-weight: bold; letter-spacing: 2px; }
-        .nav-link { text-transform: uppercase; font-size: 0.9rem; color: #333 !important; }
 
         /* Style riêng cho Login */
         .login-container {
-            min-height: 80vh; /* Chiều cao tối thiểu */
+            min-height: 100vh; /* Full màn hình */
             display: flex;
-            align-items: center;
+            align-items: stretch;
         }
         .login-image {
             background: url('https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80') no-repeat center center;
             background-size: cover;
             height: 100%;
             min-height: 600px;
-            border-radius: 0 20px 20px 0;
         }
         .form-control {
             border-radius: 0;
@@ -47,66 +42,54 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">TORANO CLONE</a> <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top border-bottom">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/" style="letter-spacing: 2px;">TORANO</a>
+        <a class="nav-link text-dark fw-bold text-uppercase ms-auto" href="/">Quay lại trang chủ</a>
+    </div>
+</nav>
 
-    <div class="container-fluid">
-        <div class="row login-container">
-            <div class="col-lg-7 p-0 d-none d-lg-block">
-                <div class="login-image"></div>
-            </div>
-            
-            <div class="col-lg-5 col-12 p-5">
-                <div class="w-75 mx-auto">
-                    <h2 class="fw-bold mb-4">CHÀO MỪNG TRỞ LẠI</h2>
-                    <p class="text-muted mb-4">Đăng nhập để theo dõi đơn hàng và nhận ưu đãi riêng.</p>
-                    
-                    <form onsubmit="handleLogin(event)">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold small">EMAIL HOẶC TÊN ĐĂNG NHẬP</label>
-                            <input type="text" class="form-control" placeholder="example@gmail.com" required>
+<div class="container-fluid">
+    <div class="row login-container">
+        <div class="col-lg-7 p-0 d-none d-lg-block">
+            <div class="login-image"></div>
+        </div>
+
+        <div class="col-lg-5 col-12 p-5 d-flex align-items-center justify-content-center" style="margin-top: 60px;">
+            <div class="w-75">
+                <h2 class="fw-bold mb-4">CHÀO MỪNG TRỞ LẠI</h2>
+                <p class="text-muted mb-4">Đăng nhập để theo dõi đơn hàng và nhận ưu đãi riêng.</p>
+
+                <div th:if="${message}" class="alert alert-success small" th:text="${message}"></div>
+                <div th:if="${error}" class="alert alert-danger small" th:text="${error}"></div>
+
+                <form action="/login" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">TÊN ĐĂNG NHẬP</label>
+                        <input type="text" name="username" class="form-control" placeholder="Nhập username..." required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small">MẬT KHẨU</label>
+                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember" name="remember-me">
+                            <label class="form-check-label small" for="remember">Ghi nhớ tôi</label>
                         </div>
-                        <div class="mb-4">
-                            <label class="form-label fw-bold small">MẬT KHẨU</label>
-                            <input type="password" class="form-control" placeholder="••••••••" required>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="remember">
-                                <label class="form-check-label small" for="remember">Ghi nhớ tôi</label>
-                            </div>
-                            <a href="#" class="text-decoration-none text-dark small fw-bold">Quên mật khẩu?</a>
-                        </div>
-                        <button type="submit" class="btn btn-dark w-100 mb-3">ĐĂNG NHẬP</button>
-                        <div class="text-center small">
-                            Chưa có tài khoản? <a href="#" class="text-decoration-none fw-bold text-dark">Đăng ký ngay</a>
-                        </div>
-                    </form>
-                </div>
+                        <a href="#" class="text-decoration-none text-dark small fw-bold">Quên mật khẩu?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 mb-3">ĐĂNG NHẬP</button>
+
+                    <div class="text-center small">
+                        Chưa có tài khoản? <a href="/register" class="text-decoration-none fw-bold text-dark">Đăng ký ngay</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
-    <h2 class="fw-bold mb-4">CHÀO MỪNG TRỞ LẠI</h2>
-
-    <!-- Nhận thông báo -->
-    <p th:if="${message}" class="text-muted mb-4" th:text="${message}"></p>
-
-    <!-- Nhận lỗi -->
-    <p th:if="${error}" class="text-danger mb-3" th:text="${error}"></p>
-
-
-
-
+</div>
 </body>
 </html>
