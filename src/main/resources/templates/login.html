@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -97,13 +97,16 @@
         </div>
     </div>
 
-    <script>
-        function handleLogin(e) {
-            e.preventDefault();
-            // Giả lập login thành công
-            alert("Đăng nhập thành công! (Phần này sẽ kết nối API Java sau)");
-            window.location.href = 'index.html';
-        }
-    </script>
+    <h2 class="fw-bold mb-4">CHÀO MỪNG TRỞ LẠI</h2>
+
+    <!-- Nhận thông báo -->
+    <p th:if="${message}" class="text-muted mb-4" th:text="${message}"></p>
+
+    <!-- Nhận lỗi -->
+    <p th:if="${error}" class="text-danger mb-3" th:text="${error}"></p>
+
+
+
+
 </body>
 </html>
