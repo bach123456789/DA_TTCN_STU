@@ -26,6 +26,7 @@ public class Product {
     private BigDecimal price;
     private Integer stock;
     private String imageURL;
+    private String image; //tên file ảnh
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)

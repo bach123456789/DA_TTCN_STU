@@ -28,7 +28,7 @@ public class Order {
     private Shipper shipper;
 
     private LocalDateTime orderDate;
-    private BigDecimal totalAmount;
+    private BigDecimal totalAmount; //tổng bill
     private String status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)

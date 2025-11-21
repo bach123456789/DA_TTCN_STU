@@ -5,6 +5,8 @@ import com.web.DA_TTCN_STU.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductService {
 
@@ -27,6 +29,10 @@ public class ProductService {
         existing.setImageURL(updated.getImageURL());
 
         productRepository.save(existing);
+    }
+
+    public List<Product> findAll() {
+        return productRepository.findAll(); // ⚡ Trả về tất cả sản phẩm
     }
 }
 

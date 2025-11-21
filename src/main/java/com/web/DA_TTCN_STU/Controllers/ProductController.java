@@ -1,16 +1,27 @@
 package com.web.DA_TTCN_STU.Controllers;
 
+import com.web.DA_TTCN_STU.DTOs.ProductDTO;
+import com.web.DA_TTCN_STU.Entities.Category;
 import com.web.DA_TTCN_STU.Entities.Product;
 import com.web.DA_TTCN_STU.Repositories.CategoryRepository;
 import com.web.DA_TTCN_STU.Repositories.ProductRepository;
 import com.web.DA_TTCN_STU.Services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class ProductController {
@@ -25,36 +36,125 @@ public class ProductController {
     private CategoryRepository categoryRepository;
 
     // Hiển thị trang form tạo sản phẩm
-    @GetMapping("/create")
+    @GetMapping("/product/create")
     public String showCreateForm(Model model) {
         model.addAttribute("product", new Product()); // object rỗng để Thymeleaf binding
         model.addAttribute("categories", categoryRepository.findAll());
         return "/product/create"; // product-create.html
     }
 
-    // Xử lý submit form
-    @PostMapping("/create")
-    public String create(@ModelAttribute("product") Product product) {
+    @PostMapping("/product/create")
+    public String create(
+            @ModelAttribute("product") Product product,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("imageFile") MultipartFile imageFile
+    ) throws IOException {
 
-        // Tự gán thời gian tạo
-        product.setCreatedAt(java.time.LocalDateTime.now());
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category không tồn tại"));
+
+        product.setCategory(category);
+        product.setCreatedAt(LocalDateTime.now());
+
+        // Lưu file vào thư mục /uploads cùng cấp với src
+        String uploadDir = System.getProperty("user.dir") + "/uploads/";
+
+        if (!imageFile.isEmpty()) {
+            String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir + fileName);
+
+            Files.createDirectories(filePath.getParent());
+            Files.write(filePath, imageFile.getBytes());
+
+            // Lưu tên file vào DB
+            product.setImageURL("/uploads/" + fileName);  // để load ảnh ra web
+            product.setImage(fileName); // cột image (tên file ảnh)
+        }
 
         productRepository.save(product);
 
-        return "/product/list"; // chuyển về danh sách
+        return "redirect:/product/list";
     }
 
+    // Hiển thị form edit
     @GetMapping("/product/edit/{id}")
-    public String update(@PathVariable Long id, Model model) {
-        Product product = productService.findById(id);
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
         model.addAttribute("product", product);
-        return "/product/update"; // tên file HTML
+        model.addAttribute("categories", categoryRepository.findAll());
+
+        return "/product/edit";
     }
 
-    @PostMapping("/product/update")
-    public String update(@ModelAttribute Product product) {
-        productService.update(product);
-        return "/product/list"; // quay lại danh sách
+    // Xử lý update
+    @PostMapping("/product/edit/{id}")
+    public String updateProduct(
+            @PathVariable Long id,
+            @ModelAttribute Product product,
+            @RequestParam("categoryID") Long categoryID,
+            @RequestParam("imageFile") MultipartFile imageFile
+    ) throws IOException {
+
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+
+        // Cập nhật basic fields
+        existing.setProductName(product.getProductName());
+        existing.setPrice(product.getPrice());
+
+        // Lấy category từ DB
+        Category category = categoryRepository.findById(categoryID)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy category"));
+        existing.setCategory(category);
+
+        // Nếu chọn ảnh mới
+        if (!imageFile.isEmpty()) {
+
+            String uploadDir = System.getProperty("user.dir") + "/uploads/";
+            Files.createDirectories(Paths.get(uploadDir));
+
+            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+            Path path = Paths.get(uploadDir + fileName);
+
+            Files.write(path, imageFile.getBytes());
+
+            existing.setImageURL("/uploads/" + fileName);
+            existing.setImage(fileName); // cột image (tên file ảnh)
+        }
+
+        productRepository.save(existing);
+
+        return "redirect:/product/list";
+    }
+
+    @GetMapping("/product/list")
+    public String listProducts(Model model,
+                               @RequestParam(defaultValue = "0") int page) {
+
+        int pageSize = 5;
+
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        // Map sang DTO để tránh vòng lặp JSON
+        List<ProductDTO> dtoList = productPage.getContent().stream()
+                .map(p -> new ProductDTO(
+                        p.getProductID(),
+                        p.getProductName(),
+                        p.getCategory().getCategoryName(),
+                        p.getPrice(),
+                        p.getStock(),
+                        p.getImageURL(),
+                        p.getImage(),
+                        p.getCreatedAt()
+                )).toList();
+
+        model.addAttribute("products", dtoList);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+
+        return "product/list";
     }
 }

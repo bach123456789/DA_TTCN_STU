@@ -1,0 +1,162 @@
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Đăng ký - Torano Clone</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        <style>
+            body { font-family: 'Segoe UI', sans-serif; background-color: #fff; }
+
+            .navbar-brand { font-weight: bold; letter-spacing: 2px; }
+            .nav-link { text-transform: uppercase; font-size: 0.9rem; color: #333 !important; }
+
+            .register-container {
+                min-height: 80vh;
+                display: flex;
+                align-items: center;
+            }
+            .register-image {
+                background: url('https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1000&q=80') no-repeat center center;
+                background-size: cover;
+                min-height: 600px;
+                border-radius: 0 20px 20px 0;
+            }
+
+            .form-control {
+                border-radius: 0;
+                padding: 12px;
+                background-color: #f8f9fa;
+                border: 1px solid #eee;
+            }
+            .form-control:focus {
+                box-shadow: none;
+                border-color: #000;
+                background-color: #fff;
+            }
+
+            .btn-dark {
+                border-radius: 0;
+                padding: 12px;
+                text-transform: uppercase;
+                font-weight: 600;
+                letter-spacing: 1px;
+            }
+        </style>
+    </head>
+
+    <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">TORANO CLONE</a>
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Đăng nhập</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row register-container">
+
+            <!-- IMAGE -->
+            <div class="col-lg-7 p-0 d-none d-lg-block">
+                <div class="register-image"></div>
+            </div>
+
+            <!-- FORM -->
+            <div class="col-lg-5 col-12 p-5">
+                <div class="w-75 mx-auto">
+                    <h2 class="fw-bold mb-4">TẠO TÀI KHOẢN MỚI</h2>
+                    <p class="text-muted mb-4">Đăng ký để mua hàng nhanh hơn và nhận ưu đãi dành riêng cho bạn.</p>
+
+                    <form onsubmit="handleRegister(event)">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">HỌ TÊN</label>
+                            <input id="fullName" type="text" class="form-control" placeholder="Nguyễn Văn A" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">EMAIL</label>
+                            <input id="email" type="email" class="form-control" placeholder="example@gmail.com" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">MẬT KHẨU</label>
+                            <input id="password" type="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small">NHẬP LẠI MẬT KHẨU</label>
+                            <input id="repassword" type="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 mb-3">ĐĂNG KÝ</button>
+
+                        <div class="text-center small">
+                            Đã có tài khoản?
+                            <a href="login.html" class="text-decoration-none fw-bold text-dark">Đăng nhập</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        async function handleRegister(e) {
+            e.preventDefault();
+
+            let name = document.getElementById("fullName").value;
+            let email = document.getElementById("email").value;
+            let pass = document.getElementById("password").value;
+            let repass = document.getElementById("repassword").value;
+
+            if (pass !== repass) {
+                alert("Mật khẩu nhập lại không khớp!");
+                return;
+            }
+
+            const data = {
+                fullName: name,
+                email: email,
+                passwordHash: pass,   // trùng với field Entity User
+                provider: "local"
+            };
+
+            try {
+                let res = await fetch("/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) {
+                    let msg = await res.text();
+                    alert("Đăng ký thất bại: " + msg);
+                    return;
+                }
+
+                alert("Đăng ký thành công!");
+                window.location.href = "/login";
+
+            } catch (err) {
+                alert("Lỗi kết nối server!");
+            }
+        }
+    </script>
+
+
+    </body>
+    </html>

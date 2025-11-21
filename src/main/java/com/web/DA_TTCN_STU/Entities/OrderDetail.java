@@ -25,4 +25,6 @@ public class OrderDetail {
 
     private Integer rating;
     private String comment;
+    private Integer quantity; //số lượng của 1 product trong order (2 cái áo len,...)
+    private Integer totalPrice; //tổng tiền của product này = giá của product * quantity
 }

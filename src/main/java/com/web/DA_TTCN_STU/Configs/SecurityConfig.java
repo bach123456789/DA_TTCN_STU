@@ -17,12 +17,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**", "/oauth2/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/**", "/oauth2/**", "/css/**", "/js/**", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/login-success")
+                        .defaultSuccessUrl("/")
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2

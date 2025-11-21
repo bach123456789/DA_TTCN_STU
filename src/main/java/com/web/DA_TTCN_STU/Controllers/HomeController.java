@@ -6,14 +6,14 @@ import com.web.DA_TTCN_STU.Repositories.ProductRepository;
 import com.web.DA_TTCN_STU.Services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class HomeController {
@@ -59,31 +59,33 @@ public class HomeController {
         return "login";  // KHÔNG có .html
     }
 
-    @PostMapping("/login")
-    public String login(
-            @RequestParam String email,
-            @RequestParam String password,
-            HttpSession session,
-            Model model
-    ) {
+    @PostMapping("/api/login")
+    @ResponseBody
+    public ResponseEntity<?> login(@RequestBody Map<String, String> request, HttpSession session) {
         try {
-            // Gọi service đã có của bạn
+            String email = request.get("email");
+            String password = request.get("password");
+
+            // Gọi service login
             String token = userService.login(email, password);
 
-            // Lưu token + email vào session (KHÔNG COOKIE)
+            // Lưu session
             session.setAttribute("token", token);
             session.setAttribute("email", email);
 
-            // Chuyển đến trang index (không redirect)
-            model.addAttribute("email", email);
-            model.addAttribute("token", token);
+            // Trả JSON → FE sẽ tự redirect qua index.html
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("token", token);
+            response.put("email", email);
 
-            return "index"; // dùng Thymeleaf → forward, không redirect
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            // Báo lỗi
-            model.addAttribute("error", e.getMessage());
-            return "login";
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "error",
+                    "message", e.getMessage()
+            ));
         }
     }
 
@@ -91,5 +93,20 @@ public class HomeController {
     public String logout(HttpSession session) {
         session.invalidate(); // xóa token + email
         return "redirect:/login";
+    }
+
+    @GetMapping("/register")
+    public String register() {
+        return "/register";
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody User user) {
+        try {
+            User newUser = userService.register(user);
+            return ResponseEntity.ok(newUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
