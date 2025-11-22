@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
     List<OrderDetail> findByOrder_OrderID(Long orderId);
+    boolean existsByProduct_ProductID(Long productID);
 }
