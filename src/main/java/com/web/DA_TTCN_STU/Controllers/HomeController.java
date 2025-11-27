@@ -1,20 +1,26 @@
 package com.web.DA_TTCN_STU.Controllers;
 
+import com.web.DA_TTCN_STU.Entities.Order;
 import com.web.DA_TTCN_STU.Entities.Product;
 import com.web.DA_TTCN_STU.Entities.User;
 import com.web.DA_TTCN_STU.Repositories.ProductRepository;
 import com.web.DA_TTCN_STU.Services.UserService;
+import com.web.DA_TTCN_STU.Utils.JwtUtils;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +33,15 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserDetailsService userDetailsService;;
 
     @GetMapping("/") //index.html
     public String index(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
@@ -94,45 +109,50 @@ public class HomeController {
         return "shop";
     }
 
-
     @GetMapping("/login")
     public String login() {
         return "login";  // KHÔNG có .html
     }
 
-    @PostMapping("/api/login")
-    @ResponseBody
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request, HttpSession session) {
+    @PostMapping("/login")
+    public String login(@RequestParam("email") String email,
+                        @RequestParam("password") String password,
+                        HttpSession session,
+                        Model model) {
+
         try {
-            String email = request.get("email");
-            String password = request.get("password");
+            // B1: xác thực bằng AuthenticationManager
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
 
-            // Gọi service login
-            String token = userService.login(email, password);
+            // B2: load user từ DB
+            User user = (User) userDetailsService.loadUserByUsername(email);
 
-            // Lưu session
+            // B3: tạo JWT và lưu vào session
+            String token = jwtUtils.generateToken(user.getEmail(), user.getRole());
             session.setAttribute("token", token);
-            session.setAttribute("email", email);
 
-            // Trả JSON → FE sẽ tự redirect qua index.html
-            Map<String, Object> response = new HashMap<>();
-            response.put("status", "success");
-            response.put("token", token);
-            response.put("email", email);
+            // 👉 lưu user vào session
+            session.setAttribute("user", user);
 
-            return ResponseEntity.ok(response);
+            // B4: redirect theo quyền
+            if (user.getRole().equals("ADMIN") || user.getRole().equals("STAFF")) {
+                return "redirect:/admin/index";
+            } else {
+                return "redirect:/";
+            }
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "status", "error",
-                    "message", e.getMessage()
-            ));
+            model.addAttribute("error", "Sai email hoặc mật khẩu");
+            return "/login";
         }
     }
 
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // xóa token + email
+        session.invalidate();
         return "redirect:/login";
     }
 
@@ -142,12 +162,22 @@ public class HomeController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public String register(@RequestParam String fullName,
+                           @RequestParam String email,
+                           @RequestParam String password,
+                           @RequestParam String repassword) {
         try {
-            User newUser = userService.register(user);
-            return ResponseEntity.ok(newUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            if(!password.equals(repassword)) {
+                throw new Exception("Mật khẩu và nhập lại mật khẩu không trùng");
+            }
+            User user = new User();
+            user.setEmail(email);
+            user.setFullName(fullName);
+            user.setPasswordHash(password);
+            userService.register(user);
+            return "redirect:/login";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

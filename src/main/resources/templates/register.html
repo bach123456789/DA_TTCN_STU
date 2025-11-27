@@ -1,5 +1,5 @@
-    <!DOCTYPE html>
-    <html lang="vi">
+<!DOCTYPE html>
+<html lang="vi">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,25 +79,25 @@
                     <h2 class="fw-bold mb-4">TẠO TÀI KHOẢN MỚI</h2>
                     <p class="text-muted mb-4">Đăng ký để mua hàng nhanh hơn và nhận ưu đãi dành riêng cho bạn.</p>
 
-                    <form onsubmit="handleRegister(event)">
+                    <form method="post" action="/register">
                         <div class="mb-3">
                             <label class="form-label fw-bold small">HỌ TÊN</label>
-                            <input id="fullName" type="text" class="form-control" placeholder="Nguyễn Văn A" required>
+                            <input id="fullName" type="text" class="form-control" placeholder="Nguyễn Văn A" required name="fullName">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-bold small">EMAIL</label>
-                            <input id="email" type="email" class="form-control" placeholder="example@gmail.com" required>
+                            <input id="email" type="email" class="form-control" placeholder="example@gmail.com" required name="email">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-bold small">MẬT KHẨU</label>
-                            <input id="password" type="password" class="form-control" placeholder="••••••••" required>
+                            <input id="password" type="password" class="form-control" placeholder="••••••••" required name="password">
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label fw-bold small">NHẬP LẠI MẬT KHẨU</label>
-                            <input id="repassword" type="password" class="form-control" placeholder="••••••••" required>
+                            <input id="repassword" type="password" class="form-control" placeholder="••••••••" required name="repassword">
                         </div>
 
                         <button type="submit" class="btn btn-dark w-100 mb-3">ĐĂNG KÝ</button>
@@ -112,51 +112,5 @@
 
         </div>
     </div>
-    <script>
-        async function handleRegister(e) {
-            e.preventDefault();
-
-            let name = document.getElementById("fullName").value;
-            let email = document.getElementById("email").value;
-            let pass = document.getElementById("password").value;
-            let repass = document.getElementById("repassword").value;
-
-            if (pass !== repass) {
-                alert("Mật khẩu nhập lại không khớp!");
-                return;
-            }
-
-            const data = {
-                fullName: name,
-                email: email,
-                passwordHash: pass,   // trùng với field Entity User
-                provider: "local"
-            };
-
-            try {
-                let res = await fetch("/register", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (!res.ok) {
-                    let msg = await res.text();
-                    alert("Đăng ký thất bại: " + msg);
-                    return;
-                }
-
-                alert("Đăng ký thành công!");
-                window.location.href = "/login";
-
-            } catch (err) {
-                alert("Lỗi kết nối server!");
-            }
-        }
-    </script>
-
-
-    </body>
-    </html>
+</body>
+</html>

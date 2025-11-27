@@ -57,7 +57,7 @@ public class UserController {
         model.addAttribute("orders", orders);
         model.addAttribute("products", productRepository.findAll());
         model.addAttribute("totalRevenue", totalRevenue);
-
+        
         return "/admin/index";
     }
 }

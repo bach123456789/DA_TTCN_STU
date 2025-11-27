@@ -205,7 +205,8 @@
 
         <div class="d-flex gap-3 align-items-center">
             <a href="/user/cart" class="text-dark fs-5 position-relative">
-                <a href="/login" class="text-dark fs-5" title="Đăng nhập">
+                <a href="/profile" class="text-dark fs-5" title="">
+                    <span th:text="|Chào ${session.user.fullName}|"></span>
                     <i class="fas fa-user"></i>
                 </a>
                 <i class="fas fa-shopping-bag"></i>
