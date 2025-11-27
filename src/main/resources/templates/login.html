@@ -89,7 +89,7 @@
                         </div>
                         <button  onclick="handleLogin(event)" type="submit" class="btn btn-dark w-100 mb-3">ĐĂNG NHẬP</button>
                         <div class="text-center small">
-                            Chưa có tài khoản? <a href="#" class="text-decoration-none fw-bold text-dark">Đăng ký ngay</a>
+                            Chưa có tài khoản? <a href="/register" class="text-decoration-none fw-bold text-dark">Đăng ký ngay</a>
                         </div>
                     </form>
                 </div>
@@ -112,7 +112,7 @@
             const result = await response.json();
 
             if (result.status === "success") {
-                window.location.href = "/"; // hoặc index.html tùy bạn
+                window.location.href = "/admin/index"; // hoặc index.html tùy bạn
             } else {
                 alert(result.message);
             }
