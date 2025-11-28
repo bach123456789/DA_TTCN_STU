@@ -17,19 +17,40 @@
             color: #333;
         }
 
-        /* --- SHARED STYLES (GIỐNG SHOP.HTML) --- */
+        /* --- USER HEADER STYLES --- */
+        .user-avatar {
+            width: 38px; height: 38px;
+            background-color: #d63031; color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem; text-transform: uppercase;
+            cursor: pointer; transition: 0.3s;
+        }
+        .user-avatar:hover { background-color: #b02627; }
 
-        /* Product Card Styles - Copy y hệt từ Shop */
+        .header-icon-btn { font-size: 1.4rem; color: #d63031; transition: 0.3s; }
+        .header-icon-btn:hover { color: #b02627; }
+
+        .cart-badge {
+            background-color: #2d3436; color: #fff; font-size: 0.65rem;
+            padding: 0.25em 0.5em; border: 2px solid #fff;
+        }
+
+        .dropdown-menu { border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 8px; margin-top: 10px; }
+        .dropdown-item { padding: 10px 20px; font-size: 0.9rem; transition: 0.2s; }
+        .dropdown-item:hover { background-color: #f8f9fa; color: #d63031; padding-left: 25px; }
+
+        .btn-login-nav {
+            border: 2px solid #333; color: #333; border-radius: 30px;
+            padding: 6px 20px; font-weight: 700; font-size: 0.85rem; transition: 0.3s;
+        }
+        .btn-login-nav:hover { background: #333; color: #fff; }
+
+        /* --- PRODUCT CARD STYLES --- */
         .product-card {
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid #eee;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            background: #fff; border-radius: 8px; overflow: hidden;
+            transition: all 0.3s ease; border: 1px solid #eee;
+            height: 100%; display: flex; flex-direction: column; position: relative;
         }
         .product-card:hover {
             box-shadow: 0 10px 20px rgba(0,0,0,0.08);
@@ -37,150 +58,75 @@
             border-color: transparent;
         }
         .product-img-wrap {
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 1/1; /* Vuông vức đẹp mắt */
+            position: relative; overflow: hidden; aspect-ratio: 1/1;
         }
         .product-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;
         }
         .product-card:hover img { transform: scale(1.05); }
 
+        /* Nút thêm giỏ hàng màu đỏ */
         .add-to-cart-btn {
             position: absolute;
-            bottom: -50px;
-            left: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            color: white;
-            border: none;
-            padding: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            transition: bottom 0.3s ease;
-            cursor: pointer;
+            bottom: -50px; left: 0; width: 100%;
+            background: #d63031; color: white;
+            border: none; padding: 12px;
+            font-weight: 700; text-transform: uppercase; font-size: 0.85rem;
+            transition: bottom 0.3s ease; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
         }
         .product-card:hover .add-to-cart-btn { bottom: 0; }
+        .add-to-cart-btn:hover { background: #b02627; }
 
         .product-info {
-            padding: 15px;
-            text-align: center;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            padding: 15px; text-align: center; flex-grow: 1;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
         .product-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #333;
-            text-decoration: none;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            font-size: 1rem; font-weight: 600; color: #333; text-decoration: none;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
             margin-bottom: 8px;
         }
         .product-name:hover { color: #d63031; }
         .product-price { color: #d63031; font-weight: 700; font-size: 1.1rem; }
 
-
-        /* --- INDEX SPECIFIC STYLES --- */
-
-        /* Hero Banner */
+        /* --- HERO BANNER --- */
         .hero-banner {
             background: url('https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?ixlib=rb-1.2.1&auto=format&fit=crop&w=1951&q=80') no-repeat center center;
-            background-size: cover;
-            height: 550px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-size: cover; height: 550px; position: relative;
+            display: flex; align-items: center; justify-content: center;
         }
         .hero-overlay {
             background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
         }
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: white;
-        }
+        .hero-content { position: relative; z-index: 2; text-align: center; color: white; }
         .hero-btn {
-            background: #fff;
-            color: #000;
-            padding: 12px 35px;
-            font-weight: 700;
-            text-transform: uppercase;
-            border: none;
-            transition: 0.3s;
+            background: #fff; color: #000; padding: 12px 35px;
+            font-weight: 700; text-transform: uppercase; border: none; transition: 0.3s;
         }
-        .hero-btn:hover {
-            background: #d63031;
-            color: #fff;
-        }
+        .hero-btn:hover { background: #d63031; color: #fff; }
 
-        /* Category Section */
+        /* --- CATEGORIES --- */
         .category-card {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            height: 300px; /* Cố định chiều cao */
+            position: relative; overflow: hidden; border-radius: 8px; margin-bottom: 20px; cursor: pointer; height: 300px;
         }
-        .category-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        .category-card:hover img {
-            transform: scale(1.1);
-        }
-        .category-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.2);
-            transition: 0.3s;
-        }
-        .category-card:hover .category-overlay {
-            background: rgba(0,0,0,0.4);
-        }
+        .category-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .category-card:hover img { transform: scale(1.1); }
+        .category-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.2); transition: 0.3s; }
+        .category-card:hover .category-overlay { background: rgba(0,0,0,0.4); }
         .category-text {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #fff;
-            color: #000;
-            padding: 10px 25px;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            border-radius: 0;
-            white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: 0.3s;
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #fff; color: #000; padding: 10px 25px;
+            font-weight: 700; text-transform: uppercase; font-size: 0.9rem;
+            white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s;
         }
-        .category-card:hover .category-text {
-            background: #d63031;
-            color: #fff;
-            bottom: 30px;
-        }
+        .category-card:hover .category-text { background: #d63031; color: #fff; bottom: 30px; }
 
-        /* Footer */
         footer { background-color: #1a1a1a; color: #999; padding: 60px 0; font-size: 0.9rem; }
         footer h5 { color: #fff; font-weight: 700; margin-bottom: 20px; letter-spacing: 1px; }
         footer a { color: #999; text-decoration: none; transition: 0.3s; display: block; margin-bottom: 10px;}
         footer a:hover { color: #fff; padding-left: 5px; }
-
     </style>
 </head>
 
@@ -189,11 +135,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
     <div class="container">
         <a class="navbar-brand fw-bold fs-3" href="/" style="letter-spacing: 1px;">TORANO</a>
-
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav gap-3 text-uppercase fw-bold" style="font-size: 0.9rem;">
                 <li class="nav-item"><a class="nav-link" href="/shop">Tất cả</a></li>
@@ -202,15 +146,33 @@
                 <li class="nav-item"><a class="nav-link" href="/shop?cat=phukien">Phụ Kiện Thời Trang</a></li>
             </ul>
         </div>
-
-        <div class="d-flex gap-3 align-items-center">
-            <a href="/user/cart" class="text-dark fs-5 position-relative">
-                <a href="/profile" class="text-dark fs-5" title="">
-                    <span th:text="|Chào ${session.user.fullName}|"></span>
-                    <i class="fas fa-user"></i>
-                </a>
-                <i class="fas fa-shopping-bag"></i>
+        <div class="d-flex gap-4 align-items-center">
+            <a href="/cart" class="position-relative text-decoration-none" title="Giỏ hàng">
+                <i class="fas fa-shopping-bag header-icon-btn"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge"
+                      th:if="${cartItems != null and !cartItems.isEmpty()}"
+                      th:text="${cartItems.size()}">0</span>
             </a>
+            <th:block th:if="${session.user == null}">
+                <a href="/login" class="btn btn-login-nav text-decoration-none">Đăng nhập</a>
+            </th:block>
+            <th:block th:if="${session.user != null}">
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar me-2" th:text="${#strings.substring(session.user.fullName, 0, 1)}">N</div>
+                        <div class="d-none d-lg-block">
+                            <div class="fw-bold text-dark" style="font-size: 0.95rem;" th:text="${session.user.fullName}">User</div>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+                        <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i> Hồ sơ</a></li>
+                        <li><a class="dropdown-item" href="/user/orders"><i class="fas fa-box me-2"></i> Đơn mua</a></li>
+                        <li th:if="${session.user.role == 'ADMIN'}"><a class="dropdown-item text-primary" href="/admin/dashboard"><i class="fas fa-chart-line me-2"></i> Quản trị</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </th:block>
         </div>
     </div>
 </nav>
@@ -229,37 +191,10 @@
         <h3 class="fw-bold text-uppercase">Danh mục nổi bật</h3>
         <div class="bg-dark mx-auto" style="width: 50px; height: 3px;"></div>
     </div>
-
     <div class="row g-4">
-        <div class="col-md-4">
-            <a href="/shop?cat=ao">
-                <div class="category-card">
-                    <img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=1000&auto=format&fit=crop" alt="Áo Nam">
-                    <div class="category-overlay"></div>
-                    <div class="category-text">Áo Thời Trang</div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="/shop?cat=quan">
-                <div class="category-card">
-                    <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=1000&auto=format&fit=crop" alt="Quần Nam">
-                    <div class="category-overlay"></div>
-                    <div class="category-text">Quần Thời Trang</div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-4">
-            <a href="/shop?cat=phukien">
-                <div class="category-card">
-                    <img src="https://images.unsplash.com/photo-1589782182703-2aaa69037b5b?q=80&w=1000&auto=format&fit=crop" alt="Phụ Kiện">
-                    <div class="category-overlay"></div>
-                    <div class="category-text">Phụ Kiện</div>
-                </div>
-            </a>
-        </div>
+        <div class="col-md-4"><a href="/shop?cat=ao"><div class="category-card"><img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=1000" alt="Áo"><div class="category-overlay"></div><div class="category-text">Áo Thời Trang</div></div></a></div>
+        <div class="col-md-4"><a href="/shop?cat=quan"><div class="category-card"><img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=1000" alt="Quần"><div class="category-overlay"></div><div class="category-text">Quần Thời Trang</div></div></a></div>
+        <div class="col-md-4"><a href="/shop?cat=phukien"><div class="category-card"><img src="https://images.unsplash.com/photo-1589782182703-2aaa69037b5b?q=80&w=1000" alt="Phụ kiện"><div class="category-overlay"></div><div class="category-text">Phụ Kiện</div></div></a></div>
     </div>
 </section>
 
@@ -277,62 +212,32 @@
 
         <div class="row row-cols-2 row-cols-md-4 g-4">
 
-            <div class="col">
+            <div class="col" th:each="p : ${products}">
                 <div class="product-card">
                     <div class="product-img-wrap">
-                        <a href="/shop/detail">
-                            <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1000&auto=format&fit=crop" alt="Product">
+                        <a th:href="@{'/product/' + ${p.productID}}">
+                            <img th:src="${p.imageURL}" th:alt="${p.productName}">
                         </a>
-                        <button class="add-to-cart-btn"><i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ</button>
-                    </div>
-                    <div class="product-info">
-                        <a href="#" class="product-name">Áo Bomber Classic MA-1 Đen</a>
-                        <div class="product-price">550.000đ</div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col">
-                <div class="product-card">
-                    <div class="product-img-wrap">
-                        <a href="#">
-                            <img src="https://images.unsplash.com/photo-1559551409-dadc959f76b8?q=80&w=1000&auto=format&fit=crop" alt="Product">
-                        </a>
-                        <button class="add-to-cart-btn"><i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ</button>
-                    </div>
-                    <div class="product-info">
-                        <a href="#" class="product-name">Áo Bomber Varsity Xanh Navy</a>
-                        <div class="product-price">620.000đ</div>
-                    </div>
-                </div>
-            </div>
+                        <form action="/cart/add" method="post">
+                            <input type="hidden" name="productId" th:value="${p.productID}">
+                            <input type="hidden" name="quantity" value="1">
 
-            <div class="col">
-                <div class="product-card">
-                    <div class="product-img-wrap">
-                        <a href="#">
-                            <img src="https://images.unsplash.com/photo-1548883354-7622d03aca27?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8amVhbnMlMjBwYW50c3xlbnwwfHwwfHx8MA%3D%3D" alt="Product">
-                        </a>
-                        <button class="add-to-cart-btn"><i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ</button>
+                            <button type="submit" class="add-to-cart-btn">
+                                <i class="fas fa-cart-plus"></i> THÊM VÀO GIỎ
+                            </button>
+                        </form>
                     </div>
-                    <div class="product-info">
-                        <a href="#" class="product-name">Quần Jeans Ống Rộng</a>
-                        <div class="product-price">450.000đ</div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col">
-                <div class="product-card">
-                    <div class="product-img-wrap">
-                        <a href="#">
-                            <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=1000&auto=format&fit=crop" alt="Product">
-                        </a>
-                        <button class="add-to-cart-btn"><i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ</button>
-                    </div>
                     <div class="product-info">
-                        <a href="#" class="product-name">Quần Cargo Pants Đen</a>
-                        <div class="product-price">420.000đ</div>
+                        <a th:href="@{'/product/' + ${p.productID}}"
+                           class="product-name"
+                           th:text="${p.productName}">Tên sản phẩm</a>
+
+                        <div class="product-price"
+                             th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                            0đ
+                        </div>
                     </div>
                 </div>
             </div>
@@ -341,78 +246,28 @@
     </div>
 </section>
 
-<footer style="background-color: #111; color: #fff; padding: 60px 0; font-size: 0.95rem;">
+<footer style="background-color: #111; color: #fff; padding: 60px 0;">
     <div class="container">
         <div class="row">
-
             <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-uppercase mb-3" style="letter-spacing: 1px; color: #fff;">
-                    ĐỊA CHỈ LIÊN HỆ
-                </h5>
-                <p class="mb-2" style="color: #ccc;">
-                    <i class="fas fa-map-marker-alt me-2 text-danger"></i>
-                    180 Cao Lỗ, Quận 8, TP.HCM
-                </p>
-                <p class="mb-2" style="color: #ccc;">
-                    <i class="fas fa-university me-2 text-secondary"></i>
-                    Đại học Công Nghệ Sài Gòn (STU)
-                </p>
-                <div class="mt-3">
-                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
-                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
-                    <a href="#" class="text-white"><i class="fab fa-github fa-lg"></i></a>
-                </div>
+                <h5 class="fw-bold mb-3">LIÊN HỆ</h5>
+                <p>180 Cao Lỗ, Q.8, TP.HCM</p>
             </div>
-
             <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-uppercase mb-3" style="letter-spacing: 1px; color: #fff;">
-                    SINH VIÊN THỰC HIỆN
-                </h5>
-                <ul class="list-unstyled" style="color: #ccc;">
-                    <li class="mb-2">
-                        <i class="fas fa-user-graduate me-2"></i>
-                        <strong>Trần Thái Học</strong>
-                    </li>
-                    <li class="mb-2">
-                        <i class="fas fa-user-graduate me-2"></i>
-                        <strong>Nguyễn Hoàng Thiên Bách</strong>
-                    </li>
-                    <li class="mt-3 pt-2 border-top border-secondary">
-                        <i class="fas fa-users me-2"></i> Lớp: <strong>D22_TH04</strong>
-                    </li>
-                </ul>
+                <h5 class="fw-bold mb-3">THÔNG TIN</h5>
+                <p>Nhóm Sinh Viên Thực Hiện</p>
             </div>
-
             <div class="col-md-4 mb-4">
-                <h5 class="fw-bold text-uppercase mb-3" style="letter-spacing: 1px; color: #fff;">
-                    GIẢNG VIÊN HƯỚNG DẪN
-                </h5>
-                <div class="d-flex align-items-center">
-                    <div class="bg-white text-dark rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
-                    <div>
-                        <p class="mb-0 fw-bold text-white">Thầy Nguyễn Trọng Nghĩa</p>
-                        <small style="color: #bbb;">Khoa Công Nghệ Thông Tin</small>
-                    </div>
-                </div>
+                <h5 class="fw-bold mb-3">GIẢNG VIÊN</h5>
+                <p>Thầy Nguyễn Trọng Nghĩa</p>
             </div>
-
         </div>
-
-        <hr class="my-4" style="border-color: #444;">
-        <div class="text-center">
-            <small style="color: #888;">
-                &copy; 2025 Đồ án Thực tập chuyên ngành - Thiết kế bởi Nhóm D22_TH04.
-            </small>
+        <div class="text-center border-top border-secondary pt-4">
+            <small>&copy; 2025 Torano Clone</small>
         </div>
     </div>
 </footer>
 
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

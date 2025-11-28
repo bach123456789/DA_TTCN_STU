@@ -4,6 +4,7 @@ import com.web.DA_TTCN_STU.Entities.Order;
 import com.web.DA_TTCN_STU.Entities.Product;
 import com.web.DA_TTCN_STU.Entities.User;
 import com.web.DA_TTCN_STU.Repositories.ProductRepository;
+import com.web.DA_TTCN_STU.Services.CartService;
 import com.web.DA_TTCN_STU.Services.UserService;
 import com.web.DA_TTCN_STU.Utils.JwtUtils;
 import jakarta.servlet.http.HttpSession;
@@ -43,33 +44,38 @@ public class HomeController {
     @Autowired
     private UserDetailsService userDetailsService;;
 
-    @GetMapping("/") //index.html
-    public String index(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
-        List<Product> products;
+    @Autowired
+    private CartService cartService;
 
-        if (keyword != null && !keyword.isEmpty()) {
-            products = productRepository.findByProductNameContainingIgnoreCase(keyword);
-            model.addAttribute("keyword", keyword);
-        } else {
-            products = productRepository.findAll();
-        }
+    @GetMapping("/")
+    public String index(Model model) {
+        // 1. Lấy 4 sản phẩm mới nhất để hiện ở trang chủ
+        // (PageRequest.of(0, 4) nghĩa là lấy trang đầu tiên, 4 phần tử)
+        Page<Product> page = productRepository.findAll(PageRequest.of(0, 4));
+        List<Product> newProducts = page.getContent();
 
-        model.addAttribute("products", products);
-        return "index"; // tương ứng với file shop.html
+        // 2. Gửi danh sách sản phẩm xuống View
+        model.addAttribute("products", newProducts);
+
+        // 3. Gửi thông tin giỏ hàng để hiện số lượng trên icon
+        model.addAttribute("cartItems", cartService.getItems());
+
+        return "index";
     }
+
 
     @GetMapping("/shop")
     public String shop(@RequestParam(value = "cat", required = false) String cat,
                        @RequestParam(value = "price", required = false) String priceRange,
-                       @RequestParam(value = "keyword", required = false) String searchKeyword, // <--- 1. THÊM THAM SỐ NÀY
+                       @RequestParam(value = "keyword", required = false) String searchKeyword,
                        @RequestParam(defaultValue = "0") int page,
                        Model model) {
 
-        int pageSize = 9; // Bạn đang để 9 sản phẩm/trang
+        int pageSize = 9;
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Product> productPage;
 
-        // --- XỬ LÝ KHOẢNG GIÁ (Giữ nguyên code của bạn) ---
+        // --- XỬ LÝ KHOẢNG GIÁ (Giữ nguyên) ---
         BigDecimal min = BigDecimal.ZERO;
         BigDecimal max = new BigDecimal("999999999");
 
@@ -83,20 +89,17 @@ public class HomeController {
                 max = new BigDecimal(priceRange);
             }
             model.addAttribute("price", priceRange);
-        }// --- LOGIC LỌC SẢN PHẨM (Đã thêm phần tìm kiếm) ---
-
-        // TRƯỜNG HỢP 1: Người dùng đang tìm kiếm (Ưu tiên cao nhất)
-        if (searchKeyword != null && !searchKeyword.isEmpty()) {
-            // Gọi hàm tìm theo tên (Nhớ khai báo hàm này trong Repository nhé)
-            productPage = productRepository.findByProductNameContainingIgnoreCase(searchKeyword, pageable);
-            model.addAttribute("keyword", searchKeyword); // Trả lại từ khóa để hiện trong ô input
         }
-        // TRƯỜNG HỢP 2: Người dùng lọc theo danh mục (Category)
+
+        // --- LOGIC LỌC SẢN PHẨM (Giữ nguyên) ---
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            productPage = productRepository.findByProductNameContainingIgnoreCase(searchKeyword, pageable);
+            model.addAttribute("keyword", searchKeyword);
+        }
         else if (cat != null && !cat.isEmpty()) {
             productPage = productRepository.findByCategory_CategoryNameAndPriceBetween(cat, min, max, pageable);
-            model.addAttribute("cat", cat); // Trả lại danh mục để bôi đậm menu
+            model.addAttribute("cat", cat);
         }
-        // TRƯỜNG HỢP 3: Mặc định (Xem tất cả hoặc chỉ lọc theo giá)
         else {
             productPage = productRepository.findByPriceBetween(min, max, pageable);
         }
@@ -105,6 +108,9 @@ public class HomeController {
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
+
+        // ---> MỚI THÊM: Chỉ thêm đúng dòng này để hiện số trên icon giỏ hàng <---
+        model.addAttribute("cartItems", cartService.getItems());
 
         return "shop";
     }

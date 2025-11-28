@@ -10,11 +10,6 @@
 
     <!-- Load từ static -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        #wrapper { display: flex; }
-        #sidebar-wrapper { width: 250px; min-height: 100vh; }
-        #page-content-wrapper { flex: 1; }
-    </style>
 </head>
 
 <body>
@@ -24,27 +19,24 @@
     <!-- Sidebar -->
     <div class="bg-dark" id="sidebar-wrapper">
         <div class="sidebar-heading text-center py-4 border-bottom">
-            <a class="navbar-brand fw-bold fs-3" href="/" style="letter-spacing: 1px; color: white">TORANO</a>
+            <a class="navbar-brand" href="/">TORANO</a> <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         </div>
 
         <div class="list-group list-group-flush my-3">
-            <a th:href="@{/admin/index}" class="list-group-item list-group-item-action bg-transparent text-white active">
+            <a th:href="@{/admin/index}" class="list-group-item list-group-item-action active bg-transparent text-white">
                 <i class="bi bi-speedometer2 me-2"></i> Tổng quan
             </a>
             <a th:href="@{/product/list}" class="list-group-item list-group-item-action bg-transparent text-white">
                 <i class="bi bi-box-seam me-2"></i> Sản phẩm
             </a>
-            <a th:href="@{/category/list}" class="list-group-item list-group-item-action bg-transparent text-white">
-                <i class="bi bi-tags me-2"></i> Danh mục
-            </a>
             <a th:href="@{/order/list}" class="list-group-item list-group-item-action bg-transparent text-white">
                 <i class="bi bi-cart-check me-2"></i> Đơn hàng
             </a>
-            <a th:href="@{/user/list}" class="list-group-item list-group-item-action bg-transparent text-white">
-                <i class="bi bi-people me-2"></i> User
+            <a th:href="@{/admin/list_users}" class="list-group-item list-group-item-action bg-transparent text-white">
+                <i class="bi bi-people me-2"></i> Khách hàng
             </a>
             <a th:href="@{/coupon/list}" class="list-group-item list-group-item-action bg-transparent text-white">
-                <i class="bi bi-gift me-2"></i> Coupon
+                <i class="bi bi-people me-2"></i> Coupon
             </a>
             <a th:href="@{/logout}" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold">
                 <i class="bi bi-box-arrow-left me-2"></i> Đăng xuất
@@ -91,7 +83,7 @@
                     <div class="p-3 bg-white shadow-sm d-flex justify-content-between align-items-center rounded">
                         <div>
                             <h3 class="fs-2" th:text="${users.size()}"></h3>
-                            <p class="fs-5">User</p>
+                            <p class="fs-5">Khách hàng</p>
                         </div>
                         <i class="bi bi-people fs-1 p-3"></i>
                     </div>
