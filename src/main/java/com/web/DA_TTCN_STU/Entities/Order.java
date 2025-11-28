@@ -23,10 +23,6 @@ public class Order {
     @JoinColumn(name = "userID")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "shipperID")
-    private Shipper shipper;
-
     private LocalDateTime orderDate;
     private BigDecimal totalAmount; //tổng bill
     private String status;

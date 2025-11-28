@@ -33,12 +33,12 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/oauth2/**", "/css/**", "/js/**", "/login", "/register").permitAll()
-                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF", "MANAGER")
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
-                        .defaultSuccessUrl("/login-success")
+                        .defaultSuccessUrl("/")
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")

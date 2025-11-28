@@ -137,7 +137,7 @@ public class HomeController {
             session.setAttribute("user", user);
 
             // B4: redirect theo quyền
-            if (user.getRole().equals("ADMIN") || user.getRole().equals("STAFF") || user.getRole().equals("ROLE_MANAGER")) {
+            if (user.getRole().equals("ADMIN") || user.getRole().equals("STAFF") || user.getRole().equals("MANAGER")) {
                 return "redirect:/admin/index";
             } else {
                 return "redirect:/";
