@@ -37,9 +37,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (token != null && jwtUtils.validateToken(token)) {
 
-                String username = jwtUtils.extractUsername(token);
+                String email = jwtUtils.extractUsername(token);
+                String role = jwtUtils.extractRole(token);
+                String fullName = jwtUtils.extractFullName(token);
+                Long userId = jwtUtils.extractUserId(token);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                // Tự tạo UserDetails dựa trên dữ liệu JWT
+                UserDetails userDetails = org.springframework.security.core.userdetails.User
+                        .withUsername(email)
+                        .password("") // không cần
+                        .roles(role)
+                        .build();
+
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(

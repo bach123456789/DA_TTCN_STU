@@ -130,14 +130,14 @@ public class HomeController {
             User user = (User) userDetailsService.loadUserByUsername(email);
 
             // B3: tạo JWT và lưu vào session
-            String token = jwtUtils.generateToken(user.getEmail(), user.getRole());
+            String token = jwtUtils.generateToken(user);
             session.setAttribute("token", token);
 
             // 👉 lưu user vào session
             session.setAttribute("user", user);
 
             // B4: redirect theo quyền
-            if (user.getRole().equals("ADMIN") || user.getRole().equals("STAFF")) {
+            if (user.getRole().equals("ADMIN") || user.getRole().equals("STAFF") || user.getRole().equals("ROLE_MANAGER")) {
                 return "redirect:/admin/index";
             } else {
                 return "redirect:/";
@@ -147,13 +147,6 @@ public class HomeController {
             model.addAttribute("error", "Sai email hoặc mật khẩu");
             return "/login";
         }
-    }
-
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
     }
 
     @GetMapping("/register")

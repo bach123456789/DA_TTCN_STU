@@ -1,5 +1,6 @@
 package com.web.DA_TTCN_STU.Utils;
 
+import com.web.DA_TTCN_STU.Entities.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -19,10 +20,14 @@ public class JwtUtils {
     }
 
     // Tạo token có roles nếu cần
-    public String generateToken(String username, String role) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setClaims(Map.of("role", role))
-                .setSubject(username)
+                .setClaims(Map.of(
+                        "role", user.getRole(),
+                        "fullName", user.getFullName(),
+                        "userId", user.getUserID()
+                ))
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -37,6 +42,14 @@ public class JwtUtils {
     // Lấy role từ token
     public String extractRole(String token) {
         return extractAllClaims(token).get("role", String.class);
+    }
+
+    public String extractFullName(String token) {
+        return extractAllClaims(token).get("fullName", String.class);
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
     }
 
     // Parse toàn bộ claims trong token

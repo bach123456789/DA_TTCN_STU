@@ -41,9 +41,11 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/login-success")
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/logout")
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login") // redirect sau khi logout
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                 );
-
         return http.build();
     }
 

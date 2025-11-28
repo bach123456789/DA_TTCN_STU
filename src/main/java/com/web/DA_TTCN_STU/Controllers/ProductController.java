@@ -8,9 +8,7 @@ import com.web.DA_TTCN_STU.Repositories.OrderDetailRepository;
 import com.web.DA_TTCN_STU.Repositories.ProductRepository;
 import com.web.DA_TTCN_STU.Services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +20,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 @Controller
 public class ProductController {
@@ -136,12 +136,22 @@ public class ProductController {
 
     @GetMapping("/product/list")
     public String listProducts(Model model,
+                               @RequestParam(value = "keyword", required = false) String keyword,
                                @RequestParam(defaultValue = "0") int page) {
-
         int pageSize = 5;
-
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Product> productPage = productRepository.findAll(pageable);
+
+        List<Product> products = productRepository.findAll();
+        Page<Product> productPage;
+
+        // Nếu keyword trống → quay lại list
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            productPage =
+                    productRepository.findByProductNameContainingIgnoreCase(keyword, pageable);
+        }
+        else {
+            productPage = productRepository.findAll(pageable);
+        }
 
         // Map sang DTO để tránh vòng lặp JSON
         List<ProductDTO> dtoList = productPage.getContent().stream()
@@ -160,7 +170,7 @@ public class ProductController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
 
-        return "product/list";
+        return "/product/list";
     }
 
     @GetMapping("/admin/product/delete/{id}")
