@@ -2,8 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Thêm sản phẩm</title>
+    <title>Chỉnh sửa người dùng</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -13,31 +12,18 @@
         #wrapper { display: flex; }
         #sidebar-wrapper { width: 250px; min-height: 100vh; }
         #page-content-wrapper { flex: 1; }
-        form label {
-            margin-bottom: 6px;
-        }
+        form label { margin-bottom: 6px; }
 
-        .card {
-            border-radius: 10px;
-        }
-
-        .form-control, .form-select {
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
+        .card { border-radius: 10px; }
+        .form-control, .form-select { border-radius: 8px; padding: 10px; }
+        .btn { padding: 10px 20px; border-radius: 8px; font-weight: 600; }
     </style>
 </head>
 <body>
 
 <div class="d-flex" id="wrapper">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <div class="bg-dark" id="sidebar-wrapper">
         <div class="sidebar-heading text-center py-4 border-bottom">
             <a class="navbar-brand fw-bold fs-3" href="/" style="letter-spacing: 1px; color: white">TORANO</a>
@@ -47,7 +33,7 @@
             <a th:href="@{/admin/index}" class="list-group-item list-group-item-action bg-transparent text-white">
                 <i class="bi bi-speedometer2 me-2"></i> Tổng quan
             </a>
-            <a th:href="@{/product/list}" class="list-group-item list-group-item-action active bg-transparent text-white">
+            <a th:href="@{/product/list}" class="list-group-item list-group-item-action bg-transparent text-white">
                 <i class="bi bi-box-seam me-2"></i> Sản phẩm
             </a>
             <a th:href="@{/category/list}" class="list-group-item list-group-item-action bg-transparent text-white">
@@ -56,7 +42,7 @@
             <a th:href="@{/order/list}" class="list-group-item list-group-item-action bg-transparent text-white">
                 <i class="bi bi-cart-check me-2"></i> Đơn hàng
             </a>
-            <a th:href="@{/user/list}" class="list-group-item list-group-item-action bg-transparent text-white">
+            <a th:href="@{/user/list}" class="list-group-item list-group-item-action bg-transparent text-white active">
                 <i class="bi bi-people me-2"></i> User
             </a>
             <a th:href="@{/coupon/list}" class="list-group-item list-group-item-action bg-transparent text-white">
@@ -74,7 +60,7 @@
         <nav class="navbar navbar-light bg-light py-3 px-4 border-bottom">
             <div class="d-flex align-items-center">
                 <i class="bi bi-list fs-3 me-3" id="menu-toggle" style="cursor:pointer"></i>
-                <h2 class="m-0">Thêm sản phẩm mới</h2>
+                <h2 class="m-0">Chỉnh sửa người dùng</h2>
             </div>
         </nav>
 
@@ -83,53 +69,59 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
 
-                    <h4 class="fw-bold mb-4">THÔNG TIN SẢN PHẨM</h4>
+                    <h4 class="fw-bold mb-4">CẬP NHẬT THÔNG TIN NGƯỜI DÙNG</h4>
 
-                    <form action="/product/create" method="post" enctype="multipart/form-data">
+                    <!-- FORM EDIT USER -->
+                    <form th:action="@{'/user/edit/' + ${user.userID}}" method="post">
+
+                        <input type="hidden" name="userID" th:value="${user.userID}">
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Tên sản phẩm</label>
-                                <input type="text" class="form-control" name="productName"
-                                       th:value="${product.productName}" required>
+                                <label class="form-label fw-semibold">Họ tên</label>
+                                <input type="text" class="form-control" name="fullName"
+                                       th:value="${user.fullName}" required>
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Giá sản phẩm</label>
-                                <input type="number" class="form-control" name="price" step="0.01"
-                                       th:value="${product.price}" required>
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" name="email"
+                                       th:value="${user.email}" required>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Danh mục</label>
-                                <select class="form-control" name="categoryId" required>
-                                    <option value="">-- Chọn danh mục --</option>
-                                    <th:block th:each="cat : ${categories}">
-                                        <option th:value="${cat.categoryID}" th:text="${cat.categoryName}"></option>
-                                    </th:block>
-                                </select>
+                                <label class="form-label fw-semibold">Số điện thoại</label>
+                                <input type="text" class="form-control" name="phone"
+                                       th:value="${user.phone}" required>
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Ảnh sản phẩm</label>
-                                <input type="file" class="form-control" name="imageFile" accept="image/*">
+                                <label class="form-label fw-semibold">Quyền</label>
+                                <select class="form-select" name="role">
+                                    <option value="CUSTOMER" th:selected="${user.role == 'CUSTOMER'}">CUSTOMER</option>
+                                    <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">ADMIN</option>
+                                    <option value="MANAGER" th:selected="${user.role == 'MANAGER'}">MANAGER</option>
+                                    <option value="STAFF" th:selected="${user.role == 'STAFF'}">STAFF</option>
+                                </select>
                             </div>
                         </div>
 
                         <div class="mt-4 d-flex justify-content-end">
-                            <a th:href="@{/product/list}" class="btn btn-secondary me-2">
+                            <a th:href="@{/user/list}" class="btn btn-secondary me-2">
                                 <i class="bi bi-arrow-left"></i> Quay lại
                             </a>
                             <button type="submit" class="btn btn-primary px-4">
-                                <i class="bi bi-check-circle"></i> Tạo sản phẩm
+                                <i class="bi bi-check-circle"></i> Lưu thay đổi
                             </button>
                         </div>
 
                     </form>
+
                 </div>
             </div>
+
         </div>
     </div>
 
