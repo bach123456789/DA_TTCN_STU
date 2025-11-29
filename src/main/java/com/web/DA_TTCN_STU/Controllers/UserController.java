@@ -73,7 +73,7 @@ public class UserController {
     public String listUsers(Model model,
                             @RequestParam(defaultValue = "0") int page) {
 
-        int pageSize = 10; // số user mỗi trang (giống giao diện)
+        int pageSize = 5; // số user mỗi trang (giống giao diện)
 
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<User> userPage = userRepository.findAll(pageable);
@@ -147,7 +147,7 @@ public class UserController {
         existing.setEmail(updatedUser.getEmail());
         existing.setPhone(updatedUser.getPhone());
         existing.setRole(updatedUser.getRole());
-
+        existing.setAddress(updatedUser.getAddress());
         userRepository.save(existing);
 
         return "redirect:/user/list";
