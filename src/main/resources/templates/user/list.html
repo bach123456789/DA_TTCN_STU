@@ -135,7 +135,7 @@
 
                     <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{'/admin/list_users'(page=${currentPage - 1})}">
+                           th:href="@{'/user/list'(page=${currentPage - 1})}">
                             Trước
                         </a>
                     </li>
@@ -145,13 +145,13 @@
                         th:classappend="${p == currentPage} ? 'active'">
                         <a class="page-link"
                            th:text="${p + 1}"
-                           th:href="@{'/admin/list_users'(page=${p})}">
+                           th:href="@{'/user/list'(page=${p})}">
                         </a>
                     </li>
 
                     <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
                         <a class="page-link"
-                           th:href="@{'/admin/list_users'(page=${currentPage + 1})}">
+                           th:href="@{'/user/list'(page=${currentPage + 1})}">
                             Sau
                         </a>
                     </li>

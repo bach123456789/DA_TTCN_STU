@@ -69,34 +69,31 @@
                 <div class="card-body p-4">
 
                     <h4 class="fw-bold mb-4">THÔNG TIN NGƯỜI DÙNG</h4>
+                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
                     <form action="/user/create" method="post">
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Họ và tên</label>
-                                <input type="text" class="form-control" name="fullName"
-                                       th:value="${user.fullName}" required>
+                                <input type="text" class="form-control" name="fullName" required>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Email</label>
-                                <input type="email" class="form-control" name="email"
-                                       th:value="${user.email}" required>
+                                <input type="email" class="form-control" name="email" required>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Số điện thoại</label>
-                                <input type="text" class="form-control" name="phone"
-                                       th:value="${user.phone}">
+                                <input type="text" class="form-control" name="phone">
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Địa chỉ</label>
-                                <input type="text" class="form-control" name="address"
-                                       th:value="${user.address}">
+                                <input type="text" class="form-control" name="address">
                             </div>
                         </div>
 

@@ -100,14 +100,20 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Quyền</label>
                                 <select class="form-select" name="role">
-                                    <option value="CUSTOMER" th:selected="${user.role == 'CUSTOMER'}">CUSTOMER</option>
                                     <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">ADMIN</option>
+                                    <option value="CUSTOMER" th:selected="${user.role == 'CUSTOMER'}">CUSTOMER</option>
                                     <option value="MANAGER" th:selected="${user.role == 'MANAGER'}">MANAGER</option>
                                     <option value="STAFF" th:selected="${user.role == 'STAFF'}">STAFF</option>
                                 </select>
                             </div>
                         </div>
-
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">Địa chỉ</label>
+                                <input type="text" class="form-control" name="address"
+                                       th:value="${user.address}" required>
+                            </div>
+                        </div>
                         <div class="mt-4 d-flex justify-content-end">
                             <a th:href="@{/user/list}" class="btn btn-secondary me-2">
                                 <i class="bi bi-arrow-left"></i> Quay lại
