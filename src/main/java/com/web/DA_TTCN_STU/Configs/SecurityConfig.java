@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/oauth2/**", "/css/**", "/js/**", "/login", "/register").permitAll()
+                        .requestMatchers("/oauth2/**", "/css/**", "/js/**", "/login", "/register", "/", "/shop").permitAll()
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF", "MANAGER")
                         .anyRequest().authenticated()
                 )
