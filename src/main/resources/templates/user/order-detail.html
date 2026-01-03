@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết đơn hàng - Torano</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;600;700&display=swap');
+        body { font-family: 'Mulish', sans-serif; background-color: #f8f9fa; color: #333; }
+
+        /* HEADER STYLES */
+        .user-avatar { width: 38px; height: 38px; background-color: #d63031; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+        .user-avatar:hover { background-color: #b02627; }
+        .header-icon-btn { font-size: 1.4rem; color: #d63031; transition: 0.3s; }
+        .cart-badge { background-color: #2d3436; color: #fff; font-size: 0.65rem; padding: 0.25em 0.5em; border: 2px solid #fff; }
+        .dropdown-menu { border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border-radius: 8px; margin-top: 10px; }
+        .dropdown-item:hover { background-color: #f8f9fa; color: #d63031; padding-left: 25px; transition: 0.2s; }
+
+        /* Order Detail Styles */
+        .order-header { background: #fff; padding: 20px; border-radius: 8px; border-left: 5px solid #d63031; }
+        .product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
+        .btn-cancel { border: 1px solid #dc3545; color: #dc3545; background: #fff; font-weight: 600; }
+        .btn-cancel:hover { background: #dc3545; color: #fff; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-3" href="/" style="letter-spacing: 1px;">TORANO</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav gap-3 text-uppercase fw-bold" style="font-size: 0.9rem;">
+                <li class="nav-item"><a class="nav-link" href="/shop">Tiếp tục mua sắm</a></li>
+            </ul>
+        </div>
+
+        <div class="d-flex gap-4 align-items-center">
+            <a href="/cart" class="position-relative text-decoration-none" title="Giỏ hàng">
+                <i class="fas fa-shopping-bag header-icon-btn"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge"
+                      th:if="${session.cartCount != null && session.cartCount > 0}"
+                      th:text="${session.cartCount}">0</span>
+            </a>
+
+            <div class="dropdown" th:if="${session.user != null}">
+                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+                    <div class="user-avatar me-2" th:text="${#strings.substring(session.user.fullName, 0, 1)}">U</div>
+                    <div class="d-none d-lg-block">
+                        <div class="fw-bold text-dark" style="font-size: 0.95rem;" th:text="${session.user.fullName}">User</div>
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+                    <li><span class="dropdown-item-text text-muted small">Tài khoản</span></li>
+                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2 text-secondary"></i> Hồ sơ</a></li>
+                    <li><a class="dropdown-item" href="/user/orders"><i class="fas fa-box me-2 text-secondary"></i> Đơn mua</a></li>
+                    <li th:if="${session.user.role == 'ADMIN'}"><a class="dropdown-item text-primary" href="/admin/dashboard"><i class="fas fa-chart-line me-2"></i> Quản trị</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Đăng xuất</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/user/orders" class="text-decoration-none text-muted">Lịch sử đơn hàng</a></li>
+            <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Chi tiết đơn hàng</li>
+        </ol>
+    </nav>
+
+    <div class="order-header shadow-sm mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h5 class="fw-bold mb-1">Đơn hàng #<span th:text="${order.orderID}"></span></h5>
+            <small class="text-muted">Ngày đặt: <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></small>
+        </div>
+        <div>
+            <span class="badge rounded-pill bg-warning text-dark px-3 py-2" th:if="${order.status == 'PENDING'}">Chờ xử lý</span>
+            <span class="badge rounded-pill bg-success px-3 py-2" th:if="${order.status == 'COMPLETED'}">Hoàn thành</span>
+            <span class="badge rounded-pill bg-danger px-3 py-2" th:if="${order.status == 'CANCELLED'}">Đã hủy</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-header bg-white py-3 fw-bold">Sản phẩm</div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <tbody>
+                            <tr th:each="detail : ${order.orderDetails}">
+                                <td class="ps-4 py-3" style="width: 80px;"><img th:src="${detail.product.imageURL}" class="product-img" alt="Product"></td>
+                                <td>
+                                    <a th:href="@{'/product/' + ${detail.product.productID}}" class="text-dark text-decoration-none fw-bold d-block" th:text="${detail.product.productName}">Tên sản phẩm</a>
+                                    <small class="text-muted" th:text="'x ' + ${detail.quantity}"></small>
+                                </td>
+                                <td class="text-end pe-4 fw-bold text-dark" th:text="${#numbers.formatDecimal(detail.totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${order.status == 'PENDING'}" class="text-end">
+                <a th:href="@{/user/orders/cancel/{id}(id=${order.orderID})}" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');" class="btn btn-cancel rounded-pill px-4"><i class="fas fa-times me-2"></i> Hủy đơn hàng</a>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3">Tổng cộng</h6>
+                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">Tạm tính:</span><span class="fw-bold" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span></div>
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-3"><span class="text-muted">Phí vận chuyển:</span><span class="text-success">Miễn phí</span></div>
+                    <div class="d-flex justify-content-between align-items-center"><span class="fw-bold fs-5">Thành tiền:</span><span class="fw-bold fs-4 text-danger" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span></div>
+                </div>
+            </div>
+            <div class="card border-0 shadow-sm rounded-3 mt-3">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3">Thông tin nhận hàng</h6>
+                    <p class="mb-1 fw-bold" th:text="${order.user.fullName}">Tên</p>
+                    <p class="mb-1 text-muted small" th:text="${order.user.phone}">SĐT</p>
+                    <p class="mb-0 text-muted small" th:text="${order.user.address != null ? order.user.address : 'Chưa cập nhật địa chỉ'}">Địa chỉ</p>
+                </div>
+            </div>
+            <div class="d-grid mt-3"><a href="/user/orders" class="btn btn-light border fw-bold text-muted"><i class="fas fa-arrow-left me-2"></i> Quay lại danh sách</a></div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

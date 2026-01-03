@@ -141,8 +141,10 @@ public class CartService {
     }
 
     // 9. MỚI THÊM: Xóa sạch giỏ hàng (Dùng khi thanh toán xong)
+
+
     public void clear() {
         items.clear();
-        appliedCoupon = null;
+        removeCoupon(); // Nếu có hàm xóa coupon
     }
 }
