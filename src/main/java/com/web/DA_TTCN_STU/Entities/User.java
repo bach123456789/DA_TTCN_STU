@@ -33,7 +33,7 @@ public class User implements UserDetails {
 
     // Dùng để biết tài khoản này là đăng nhập local hay Google
     private String provider; // "local" | "google"
-    private String role = "ROLE_CUSTOMER";
+    private String role = "CUSTOMER";
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();

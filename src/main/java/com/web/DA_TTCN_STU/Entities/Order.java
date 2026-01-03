@@ -26,6 +26,7 @@ public class Order {
     private LocalDateTime orderDate;
     private BigDecimal totalAmount; //tổng bill
     private String status;
+    private String method;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;
