@@ -11,17 +11,21 @@ import com.web.DA_TTCN_STU.Repositories.ProductRepository;
 import com.web.DA_TTCN_STU.Services.CartService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class OrderController {
@@ -42,7 +46,9 @@ public class OrderController {
     // 1. XỬ LÝ ĐẶT HÀNG (CHECKOUT)
     // ==========================================
     @GetMapping("/checkout")
-    public String checkout(HttpSession session, RedirectAttributes redirectAttributes) {
+    public String checkout(HttpSession session, RedirectAttributes redirectAttributes,
+                           @RequestParam("method") String method,
+                           Model model) {
         // 1. Kiểm tra đăng nhập (Lấy User từ Session như bạn yêu cầu)
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -89,11 +95,38 @@ public class OrderController {
         // Lưu danh sách chi tiết vào DB
         orderDetailRepository.saveAll(details);
 
-        // 5. XÓA GIỎ HÀNG & HOÀN TẤT
-        cartService.clear(); // Nhớ viết hàm clear() trong CartService nhé (xóa list item, xóa coupon)
+        // ===== CASH ===== MỚI UPDATE 04/01/2026
+        if ("CASH".equalsIgnoreCase(method)) {
+            cartService.clear();
+            redirectAttributes.addFlashAttribute(
+                    "success", "Đặt hàng thành công! Mã đơn #" + savedOrder.getOrderID()
+            );
+            return "redirect:/user/orders";
+        }
 
-        redirectAttributes.addFlashAttribute("success", "Đặt hàng thành công! Mã đơn: #" + savedOrder.getOrderID());
-        return "redirect:/user/orders"; // Chuyển hướng đến trang lịch sử đơn hàng
+        // ===== CARD → SHOW QR =====
+        String qrUrl = generateQrUrl(order);
+        System.out.println("QR URL = " + qrUrl);
+
+        model.addAttribute("order", savedOrder);
+        model.addAttribute("qrUrl", qrUrl);
+
+        return "user/payment-qr"; // trang hiển thị QR
+    }
+
+    private String generateQrUrl(Order order) {
+        String bankCode = "VCB";
+        String accountNo = "0911000007540";
+        String amount = order.getTotalAmount().toString();
+
+        String description = "Thanh toan don hang #" + order.getOrderID();
+        String encodedDescription = URLEncoder.encode(description, StandardCharsets.UTF_8);
+
+        return "https://img.vietqr.io/image/"
+                + bankCode + "-" + accountNo
+                + "-compact.png"
+                + "?amount=" + amount
+                + "&addInfo=" + encodedDescription;
     }
 
     // ==========================================
@@ -155,5 +188,126 @@ public class OrderController {
         }
 
         return "redirect:/user/orders";
+    }
+
+    //PHẦN CỦA ADMIN
+    @GetMapping("/order/list")
+    public String listOrders(
+            @RequestParam(defaultValue = "0") int page,
+            Model model
+    ) {
+        int pageSize = 5;
+
+        Page<Order> orderPage = orderRepository.findAll(
+                PageRequest.of(page, pageSize, Sort.by("orderDate").descending())
+        );
+
+        model.addAttribute("orders", orderPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
+
+        return "/order/list";
+    }
+
+    /* =========================
+       HIỂN THỊ FORM EDIT
+       ========================= */
+    @GetMapping("/order/edit/{id}")
+    public String editOrderForm(
+            @PathVariable("id") Long id,
+            Model model
+    ) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+
+        if (optionalOrder.isEmpty()) {
+            model.addAttribute("error", "Không tìm thấy đơn hàng");
+            return "redirect:/order/list";
+        }
+
+        Order order = optionalOrder.get();
+
+        // ⚠️ đảm bảo orderDetails đã được load
+        order.getOrderDetails().size();
+
+        model.addAttribute("order", order);
+        return "/order/edit";
+    }
+
+    /* =========================
+       XỬ LÝ SUBMIT EDIT
+       ========================= */
+    @PostMapping("/order/edit/{id}")
+    public String updateOrder(
+            @PathVariable("id") Long id,
+            @ModelAttribute("order") Order formOrder,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+
+        if (optionalOrder.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Đơn hàng không tồn tại");
+            return "redirect:/order/list";
+        }
+
+        Order dbOrder = optionalOrder.get();
+
+        // ===== UPDATE ORDER =====
+        dbOrder.setOrderDate(formOrder.getOrderDate());
+        dbOrder.setStatus(formOrder.getStatus());
+        dbOrder.setMethod(formOrder.getMethod());
+
+        // ===== UPDATE ORDER DETAILS + CALC TOTAL =====
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        for (int i = 0; i < dbOrder.getOrderDetails().size(); i++) {
+            OrderDetail dbDetail = dbOrder.getOrderDetails().get(i);
+            OrderDetail formDetail = formOrder.getOrderDetails().get(i);
+
+            dbDetail.setQuantity(formDetail.getQuantity());
+            dbDetail.setTotalPrice(formDetail.getTotalPrice());
+            dbDetail.setRating(formDetail.getRating());
+            dbDetail.setComment(formDetail.getComment());
+
+            // CỘNG TỔNG
+            if (formDetail.getTotalPrice() != null) {
+                totalAmount = totalAmount.add(
+                        BigDecimal.valueOf(formDetail.getTotalPrice())
+                );
+            }
+        }
+
+        // ===== SET TOTAL AMOUNT =====
+        dbOrder.setTotalAmount(totalAmount);
+
+        orderRepository.save(dbOrder);
+
+        redirectAttributes.addFlashAttribute(
+                "successMessage", "Cập nhật đơn hàng thành công"
+        );
+
+        return "redirect:/order/list";
+    }
+
+    @GetMapping("/order/delete/{id}")
+    public String deleteOrder(
+            @PathVariable("id") Long id,
+            RedirectAttributes redirectAttributes
+    ) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+
+        if (optionalOrder.isEmpty()) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage", "Đơn hàng không tồn tại"
+            );
+            return "redirect:/order/list";
+        }
+
+        orderRepository.deleteById(id);
+
+        redirectAttributes.addFlashAttribute(
+                "successMessage", "Xoá đơn hàng thành công"
+        );
+
+        return "redirect:/order/list";
     }
 }

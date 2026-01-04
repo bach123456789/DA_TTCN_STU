@@ -220,9 +220,42 @@
                 </div>
 
                 <div th:if="${session.user != null}">
-                    <a href="/checkout" class="btn checkout-btn w-100 rounded-pill shadow-sm">
-                        TIẾN HÀNH THANH TOÁN <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
+                    <form action="/checkout" method="get">
+
+                        <!-- CHỌN PHƯƠNG THỨC THANH TOÁN -->
+                        <div class="mb-3">
+                            <label class="fw-bold mb-2 d-block">Phương thức thanh toán</label>
+
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="method"
+                                       value="CASH"
+                                       checked>
+                                <label class="form-check-label">
+                                    Thanh toán khi nhận hàng (CASH)
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="method"
+                                       value="CARD">
+                                <label class="form-check-label">
+                                    Chuyển khoản / QR (CARD)
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- NÚT THANH TOÁN -->
+                        <button type="submit"
+                                class="btn checkout-btn w-100 rounded-pill shadow-sm">
+                            TIẾN HÀNH THANH TOÁN
+                            <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+
+                    </form>
                 </div>
                 <div th:if="${session.user == null}">
                     <a href="/login" class="btn btn-outline-dark w-100 rounded-pill">
