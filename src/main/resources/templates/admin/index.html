@@ -131,12 +131,10 @@
                             <td th:text="${order.totalAmount} + ' VND'"></td>
 
                             <td>
-                                <span class="badge"
-                                      th:classappend="${order.status=='COMPLETED'} ? ' bg-success'
-                                      : ${order.status=='PENDING'} ? ' bg-warning text-dark'
-                                      : ' bg-danger'"
-                                      th:text="${order.status}">
-                                </span>
+                               <span class="badge"
+                                     th:classappend="${order.status == 'COMPLETED' ? 'bg-success' : (order.status == 'PENDING' ? 'bg-warning text-dark' : 'bg-danger')}"
+                                     th:text="${order.status}">
+                               </span>
                             </td>
 
                             <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
