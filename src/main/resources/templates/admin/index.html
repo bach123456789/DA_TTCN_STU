@@ -132,8 +132,8 @@
 
                             <td>
                                 <span class="badge"
-                                      th:classappend="${order.status=='Completed'} ? ' bg-success'
-                                      : ${order.status=='Pending'} ? ' bg-warning text-dark'
+                                      th:classappend="${order.status=='COMPLETED'} ? ' bg-success'
+                                      : ${order.status=='PENDING'} ? ' bg-warning text-dark'
                                       : ' bg-danger'"
                                       th:text="${order.status}">
                                 </span>
