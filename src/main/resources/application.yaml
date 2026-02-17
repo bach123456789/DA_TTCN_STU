@@ -1,4 +1,6 @@
 spring:
+  server:
+    port: ${PORT:8080}
   datasource:
     url: jdbc:mysql://localhost:3306/do_an_ttcn_stu
     username: root
