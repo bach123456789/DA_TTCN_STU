@@ -121,41 +121,41 @@ public class HomeController {
         return "login";  // KHÔNG có .html
     }
 
-    @PostMapping("/login")
-    public String login(@RequestParam("email") String email,
-                        @RequestParam("password") String password,
-                        HttpSession session,
-                        Model model) {
-
-        try {
-            // B1: xác thực bằng AuthenticationManager
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password)
-            );
-            SecurityContextHolder.getContext().setAuthentication(auth);
-
-            // B2: load user từ DB
-            User user = (User) userDetailsService.loadUserByUsername(email);
-
-            // B3: tạo JWT và lưu vào session
-            String token = jwtUtils.generateToken(user);
-            session.setAttribute("token", token);
-
-            // 👉 lưu user vào session
-            session.setAttribute("user", user);
-
-            // B4: redirect theo quyền
-            if (user.getRole().equals("ADMIN") || user.getRole().equals("STAFF") || user.getRole().equals("MANAGER")) {
-                return "redirect:/admin/index";
-            } else {
-                return "redirect:/";
-            }
-
-        } catch (Exception e) {
-            model.addAttribute("error", "Sai email hoặc mật khẩu");
-            return "/login";
-        }
-    }
+//    @PostMapping("/login")
+//    public String login(@RequestParam("email") String email,
+//                        @RequestParam("password") String password,
+//                        HttpSession session,
+//                        Model model) {
+//
+//        try {
+//            // B1: xác thực bằng AuthenticationManager
+//            Authentication auth = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(email, password)
+//            );
+//            SecurityContextHolder.getContext().setAuthentication(auth);
+//
+//            // B2: load user từ DB
+//            User user = (User) userDetailsService.loadUserByUsername(email);
+//
+//            // B3: tạo JWT và lưu vào session
+//            String token = jwtUtils.generateToken(user);
+//            session.setAttribute("token", token);
+//
+//            // 👉 lưu user vào session
+//            session.setAttribute("user", user);
+//
+//            // B4: redirect theo quyền
+//            if (user.getRole().equals("ADMIN") || user.getRole().equals("STAFF") || user.getRole().equals("MANAGER")) {
+//                return "redirect:/admin/index";
+//            } else {
+//                return "redirect:/";
+//            }
+//
+//        } catch (Exception e) {
+//            model.addAttribute("error", "Sai email hoặc mật khẩu");
+//            return "/login";
+//        }
+//    }
 
     @GetMapping("/register")
     public String register() {

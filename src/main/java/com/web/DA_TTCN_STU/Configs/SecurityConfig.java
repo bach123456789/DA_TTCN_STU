@@ -33,6 +33,26 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .successHandler((request, response, authentication) -> {
+
+                            boolean isAdmin = authentication.getAuthorities().stream()
+                                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                                            || auth.getAuthority().equals("ROLE_STAFF")
+                                            || auth.getAuthority().equals("ROLE_MANAGER"));
+
+                            if (isAdmin) {
+                                response.sendRedirect("/admin/index");
+                            } else {
+                                response.sendRedirect("/");
+                            }
+                        })
+                        .permitAll()
+                )
 //                .formLogin(form -> form.disable())
 //                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
