@@ -66,7 +66,7 @@ public class UserController {
         model.addAttribute("products", productRepository.findAll());
         model.addAttribute("totalRevenue", totalRevenue);
         
-        return "/admin/index";
+        return "admin/index";
     }
 
     @GetMapping("/user/list")
